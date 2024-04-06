@@ -1,0 +1,36 @@
+import pytest
+from project import CardGame
+
+@pytest.fixture
+def game():
+    return CardGame()
+
+def test_CreateCardSet():
+    game = CardGame()
+    assert len(game.createCardSet()) == 80
+
+def test_getPlayerSet(game):
+    getPlayerSet = game.getPlayerSet(4)
+    assert len(getPlayerSet) == 4
+    for cards in getPlayerSet.values():
+        assert len(cards) == 3
+
+def test_continueGambling(game):
+    name = "player1"
+    cards =[1,2,3]
+    initialLength = len(cards)
+    game.continueGambling(name, cards)
+    assert len(cards) == initialLength + 1
+
+def test_findWinner(game,capsys):
+    game.passes =   {'Alice', 'Bob'}
+    game.playerDict = {'Alice': [10, 20, 30, 5, 25], 'Bob': [15]}
+    game.findWinner()
+    captured = capsys.readouterr().out
+    assert "The winner" in captured
+
+    game.passes =   {'Alice', 'Bob'}
+    game.playerDict = {'Alice': [10, 20, 30, 5, 25], 'Bob': [10, 20, 30, 5, 25]}
+    game.findWinner()
+    captured = capsys.readouterr().out
+    assert  "The winners" in captured
